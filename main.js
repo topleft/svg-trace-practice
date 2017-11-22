@@ -96,6 +96,7 @@ class Path {
   }
   
 }
+
 const paper = Snap("#svg");
 const paths = loops.map((p) => new Path(p));
 paths.forEach((p) => p.trace(paper));

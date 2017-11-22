@@ -1,0 +1,10 @@
+#svg {
+    height: 1000px; 
+    width: 1000px; 
+    border: solid 1px black; 
+    background-color: #FFFEE4;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#FFFEE4), to(#CCCBB6));
+    background-image: -webkit-linear-gradient(top, #FFFEE4, #CCCBB6);
+    background-image: -moz-linear-gradient(top, #FFFEE4, #CCCBB6);
+    background-image: linear-gradient(to bottom, #FFFEE4, #CCCBB6);
+}
