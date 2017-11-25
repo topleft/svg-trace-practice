@@ -7,6 +7,7 @@ const loops = [
       color: "#B21212",
       timeout: 500,
       duration: 1200,
+      id: 'circle1'
     }
     ,
     {
@@ -64,32 +65,69 @@ const loops = [
     }
 ];
 
+createSymetricalCirleGrid = (paper, gridSize, vMargin, hMargin, radius) => {
+  let x = vMargin;
+  let y = hMargin;
+  for (let i = 0; i < gridSize; i++) {
+    if (i%Math.sqrt(gridSize) === 0) {
+      x = vMargin;
+      y += hMargin;
+    }
+
+    calculated_x = (x * (i%(Math.sqrt(gridSize)))) + radius
+    let c = paper.circle(calculated_x, y, radius)
+    c.attr({
+      stroke: "#1485CC",
+      strokeWidth: 2,
+      fillOpacity: 0
+    })
+  } 
+}
+
 class Path {
   constructor(obj) {
+    this.id = obj.id || new Date();
+    this.class = 'button'
     this.data = obj.data; 
     this.color = obj.color || '#000'; 
     this.timeout = obj.timeout || 0; 
     this.duration = obj.duration || 500;
+    this.link = obj.link;
+    this.pathLength = Snap.path.getTotalLength(this.data);
+    this.subPath = Snap.path.getSubpath(this.data, 0, 0)
+    this.instantiatedPath = null;
+  }
+
+  instantiatePath (paper) {
+    this.instantiatedPath = paper.path({
+      path: this.subPath,
+      stroke: this.color,
+      strokeWidth: 0,
+      fillOpacity: 0,
+    });
+    
+  }
+
+  onHover () {
+    if (!this.hoverColor) return;
+
   }
 
   trace (paper) {
     setTimeout(() => {
-      const loopLength = Snap.path.getTotalLength(this.data);
-      const instantiatedPath = paper.path({
-        path: Snap.path.getSubpath(this.data, 0, 0),
-        stroke: this.color,
-        fillOpacity: 0,
-        strokeWidth: 0,
-      });
+      this.instantiatePath(paper);
       
-      Snap.animate(0, loopLength,
+      Snap.animate(0, this.pathLength,
         (function(step){ //step function
-          instantiatedPath.attr({
+          this.instantiatedPath.attr({
             path: Snap.path.getSubpath(this.data, 0, step),
-            strokeWidth: 2
+            strokeWidth: 2,
+            id: this.id,
+            class: this.class,
+            fill: this.color
           });
           
-        }).bind(this), // end of step function (must bind to class)
+        }).bind(this), // end of step function (must bind to class instance)
         this.duration //duration
       ); //Snap.animate
     }, this.timeout)
@@ -101,5 +139,7 @@ const paper = Snap("#svg");
 const paths = loops.map((p) => new Path(p));
 paths.forEach((p) => p.trace(paper));
 
+createSymetricalCirleGrid(paper, 9, 31, 32, 40);
+console.log(paper.getBBox())
 
 
