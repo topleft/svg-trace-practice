@@ -65,20 +65,25 @@ const loops = [
     }
 ];
 
-createSymetricalCirleGrid = (paper, gridSize, vMargin, hMargin, radius) => {
-  let x = vMargin;
-  let y = hMargin;
+createSymetricalCirleGrid = (paper, circlesPerRow, vMargin, hMargin, radius) => {
+  const gridSize = Math.pow(circlesPerRow, 2)
+  const diameter = radius * 2;
+  const width = hMargin > diameter ? hMargin * circlesPerRow : (hMargin * (circlesPerRow - 1)) + diameter
+  const height = vMargin > diameter ? vMargin * circlesPerRow : (vMargin * (circlesPerRow - 1)) + diameter
+  const xOrigin = (width/2 * -1) + radius;
+  const yOrigin = (height/2 * -1) + radius;
+  let x = xOrigin;
+  let y = yOrigin;
   for (let i = 0; i < gridSize; i++) {
-    if (i%Math.sqrt(gridSize) === 0) {
-      x = vMargin;
-      y += hMargin;
+    if (i%circlesPerRow === 0 && i !== 0) { // create new row
+      x = xOrigin;
+      y += vMargin;
     }
-
-    calculated_x = (x * (i%(Math.sqrt(gridSize)))) + radius
+    let calculated_x = x + (hMargin * (i%circlesPerRow));
     let c = paper.circle(calculated_x, y, radius)
     c.attr({
       stroke: "#1485CC",
-      strokeWidth: 2,
+      strokeWidth: 1,
       fillOpacity: 0
     })
   } 
@@ -105,7 +110,6 @@ class Path {
       strokeWidth: 0,
       fillOpacity: 0,
     });
-    
   }
 
   onHover () {
@@ -135,11 +139,17 @@ class Path {
   
 }
 
-const paper = Snap("#svg");
+const patternPaper = Snap("#pattern");
+const bodyschemaPaper = Snap("#bodyschema");
 const paths = loops.map((p) => new Path(p));
-paths.forEach((p) => p.trace(paper));
+paths.forEach((p) => p.trace(bodyschemaPaper));
 
-createSymetricalCirleGrid(paper, 9, 31, 32, 40);
-console.log(paper.getBBox())
+createSymetricalCirleGrid(patternPaper, 9, 10, 6, 11);
 
+const center = patternPaper.circle(0,0,1);
+center.attr({
+  stroke: "#E9483B",
+  strokeWidth: 1,
+  fillOpacity: 0
+})
 

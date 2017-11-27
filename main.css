@@ -1,5 +1,14 @@
 
 html, body {
+}
+
+.flex-container {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+}
+
+#svg-container {
     margin: 0;
     height: 100%;
     background-color: #FFFEE4;
@@ -7,17 +16,13 @@ html, body {
     background-image: -webkit-linear-gradient(top, #FFFEE4, #CCCBB6);
     background-image: -moz-linear-gradient(top, #FFFEE4, #CCCBB6);
     background-image: linear-gradient(to bottom, #FFFEE4, #CCCBB6);
-}
-
-#svg-container {
-    height: 90vh; 
-    width: 90vh; 
-    margin: auto;
+    height: auto; 
+    width: 40%;
+    margin: 1rem;
+    border: solid 1px #070541;
 }
 
 #svg {
-    padding-top: 40vh;
     margin: auto;
     display: block;    
-    overflow: visible;
 }
