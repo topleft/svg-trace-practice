@@ -7,6 +7,7 @@ const loops = [
       color: "#B21212",
       timeout: 500,
       duration: 1200,
+      id: 'circle1'
     }
     ,
     {
@@ -64,32 +65,73 @@ const loops = [
     }
 ];
 
+createSymetricalCirleGrid = (paper, circlesPerRow, vMargin, hMargin, radius) => {
+  const gridSize = Math.pow(circlesPerRow, 2)
+  const diameter = radius * 2;
+  const width = hMargin > diameter ? hMargin * circlesPerRow : (hMargin * (circlesPerRow - 1)) + diameter
+  const height = vMargin > diameter ? vMargin * circlesPerRow : (vMargin * (circlesPerRow - 1)) + diameter
+  const xOrigin = (width/2 * -1) + radius;
+  const yOrigin = (height/2 * -1) + radius;
+  let x = xOrigin;
+  let y = yOrigin;
+  for (let i = 0; i < gridSize; i++) {
+    if (i%circlesPerRow === 0 && i !== 0) { // create new row
+      x = xOrigin;
+      y += vMargin;
+    }
+    let calculated_x = x + (hMargin * (i%circlesPerRow));
+    let c = paper.circle(calculated_x, y, radius)
+    c.attr({
+      stroke: "#1485CC",
+      strokeWidth: 1,
+      fillOpacity: 0
+    })
+  } 
+}
+
 class Path {
   constructor(obj) {
+    this.id = obj.id || new Date();
+    this.class = 'button'
     this.data = obj.data; 
     this.color = obj.color || '#000'; 
     this.timeout = obj.timeout || 0; 
     this.duration = obj.duration || 500;
+    this.link = obj.link;
+    this.pathLength = Snap.path.getTotalLength(this.data);
+    this.subPath = Snap.path.getSubpath(this.data, 0, 0)
+    this.instantiatedPath = null;
+  }
+
+  instantiatePath (paper) {
+    this.instantiatedPath = paper.path({
+      path: this.subPath,
+      stroke: this.color,
+      strokeWidth: 0,
+      fillOpacity: 0,
+    });
+  }
+
+  onHover () {
+    if (!this.hoverColor) return;
+
   }
 
   trace (paper) {
     setTimeout(() => {
-      const loopLength = Snap.path.getTotalLength(this.data);
-      const instantiatedPath = paper.path({
-        path: Snap.path.getSubpath(this.data, 0, 0),
-        stroke: this.color,
-        fillOpacity: 0,
-        strokeWidth: 0,
-      });
+      this.instantiatePath(paper);
       
-      Snap.animate(0, loopLength,
+      Snap.animate(0, this.pathLength,
         (function(step){ //step function
-          instantiatedPath.attr({
+          this.instantiatedPath.attr({
             path: Snap.path.getSubpath(this.data, 0, step),
-            strokeWidth: 2
+            strokeWidth: 2,
+            id: this.id,
+            class: this.class,
+            fill: this.color
           });
           
-        }).bind(this), // end of step function (must bind to class)
+        }).bind(this), // end of step function (must bind to class instance)
         this.duration //duration
       ); //Snap.animate
     }, this.timeout)
@@ -97,9 +139,17 @@ class Path {
   
 }
 
-const paper = Snap("#svg");
+const patternPaper = Snap("#pattern");
+const bodyschemaPaper = Snap("#bodyschema");
 const paths = loops.map((p) => new Path(p));
-paths.forEach((p) => p.trace(paper));
+paths.forEach((p) => p.trace(bodyschemaPaper));
 
+createSymetricalCirleGrid(patternPaper, 9, 10, 6, 11);
 
+const center = patternPaper.circle(0,0,1);
+center.attr({
+  stroke: "#E9483B",
+  strokeWidth: 1,
+  fillOpacity: 0
+})
 
