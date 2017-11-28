@@ -74,6 +74,7 @@ createSymetricalCirleGrid = (paper, circlesPerRow, vMargin, hMargin, radius) => 
   const yOrigin = (height/2 * -1) + radius;
   let x = xOrigin;
   let y = yOrigin;
+  const popIndex = Math.floor(Math.random() * gridSize)
   for (let i = 0; i < gridSize; i++) {
     if (i%circlesPerRow === 0 && i !== 0) { // create new row
       x = xOrigin;
@@ -82,7 +83,7 @@ createSymetricalCirleGrid = (paper, circlesPerRow, vMargin, hMargin, radius) => 
     let calculated_x = x + (hMargin * (i%circlesPerRow));
     let c = paper.circle(calculated_x, y, radius)
     c.attr({
-      stroke: "#1485CC",
+      stroke: i === popIndex ? "clear" : "#1485CC",
       strokeWidth: 1,
       fillOpacity: 0
     })
@@ -144,12 +145,13 @@ const bodyschemaPaper = Snap("#bodyschema");
 const paths = loops.map((p) => new Path(p));
 paths.forEach((p) => p.trace(bodyschemaPaper));
 
-createSymetricalCirleGrid(patternPaper, 9, 10, 6, 11);
+createSymetricalCirleGrid(patternPaper, 9, 6, 12, 2);
 
-const center = patternPaper.circle(0,0,1);
-center.attr({
-  stroke: "#E9483B",
-  strokeWidth: 1,
-  fillOpacity: 0
-})
+
+// const center = patternPaper.circle(0,0,1);
+// center.attr({
+//   stroke: "#E9483B",
+//   strokeWidth: 1,
+//   fillOpacity: 0
+// })
 
