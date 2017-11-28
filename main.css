@@ -19,10 +19,16 @@ html, body {
     height: auto; 
     width: 40%;
     margin: 1rem;
-    border: solid 1px #070541;
+    border: solid 1px rgb(197, 196, 196);
+    border-radius: 2px;
 }
 
 #svg {
     margin: auto;
     display: block;    
+}
+
+.button:hover {
+    fill-opacity: .05 !important;
+    stroke-opacity: .8 !important;
 }
