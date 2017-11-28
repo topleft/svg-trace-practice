@@ -66,6 +66,8 @@ const loops = [
 ];
 
 createSymetricalCirleGrid = (paper, circlesPerRow, vMargin, hMargin, radius) => {
+  const group = paper.g()
+  const set = new Snap.Set();
   const gridSize = Math.pow(circlesPerRow, 2)
   const diameter = radius * 2;
   const width = hMargin > diameter ? hMargin * circlesPerRow : (hMargin * (circlesPerRow - 1)) + diameter
@@ -83,11 +85,35 @@ createSymetricalCirleGrid = (paper, circlesPerRow, vMargin, hMargin, radius) => 
     let calculated_x = x + (hMargin * (i%circlesPerRow));
     let c = paper.circle(calculated_x, y, radius)
     c.attr({
-      stroke: i === popIndex ? "clear" : "#1485CC",
-      strokeWidth: 1,
-      fillOpacity: 0
+      stroke: i === popIndex ? "#1485CC" : "#1485CC",
+      strokeWidth: 0.6,
+      fillOpacity: 0,
     })
-  } 
+    group.add(c);
+    set.push(c);
+  }
+  return set; 
+}
+
+createShaddow = (grid, paper) => {
+  const gridSize = grid.items.length;
+  const circlesPerRow = Math.sqrt(gridSize);
+  let sizeFactor = 0.1;
+  grid.items.forEach((c, i) => {
+    
+    if (!((i)%circlesPerRow)) {
+      sizeFactor += c.attr('r')/100
+    }
+    const newRadius = (parseInt(c.attr('r')) * sizeFactor) + parseInt(c.attr('r'))
+    const newX = (parseInt(c.attr('cx')) * sizeFactor) + parseInt(c.attr('cx'))
+    c.attr({
+      cx: newX,
+      r: newRadius,
+      transform: "t1,50s",
+      strokeOpacity: .5,
+      stroke: "#555",
+    })
+  })
 }
 
 class Path {
@@ -140,14 +166,16 @@ class Path {
   
 }
 
-const patternPaper = Snap("#pattern");
 const bodyschemaPaper = Snap("#bodyschema");
 const paths = loops.map((p) => new Path(p));
 paths.forEach((p) => p.trace(bodyschemaPaper));
 
-createSymetricalCirleGrid(patternPaper, 9, 6, 12, 2);
-
-
+const patternPaper = Snap("#pattern");
+const grid = createSymetricalCirleGrid(patternPaper, 5, 4, 4, 3);
+const shaddow = grid.clone();
+const myMatrix = new Snap.Matrix();
+createShaddow(grid, patternPaper);
+console.log(grid.getBBox())
 // const center = patternPaper.circle(0,0,1);
 // center.attr({
 //   stroke: "#E9483B",
